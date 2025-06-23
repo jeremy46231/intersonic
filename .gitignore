@@ -1,0 +1,8 @@
+log/
+.env
+temp*
+repomix-output.xml
+.DS_Store
+
+queries.sh
+archive.txt
