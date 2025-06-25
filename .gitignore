@@ -1,8 +1,14 @@
 log/
-.env
+*.env
 temp*
 repomix-output.xml
 .DS_Store
 
 queries.sh
 archive.txt
+
+__pycache__/
+*.py[cod]
+*.pyo
+docker-compose.override.yml
+*.log
