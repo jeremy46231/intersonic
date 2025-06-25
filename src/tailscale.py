@@ -46,13 +46,3 @@ async def tailscale_exit_nodes():
         if node.get("ExitNodeOption", False) and node.get("Online", False)
     ]
     return exit_nodes
-
-async def tailscale_suggested_exit_node():
-    status, stdout, stderr = await run_tailscale("exit-node", "suggest")
-    if status != 0:
-        return None
-    try:
-        suggested_exit_node = stdout.splitlines()[0].split(": ")[1]
-    except IndexError as e:
-        raise RuntimeError(f"Failed to parse Tailscale suggested exit node: {e}\nOutput: {stdout}")
-    return suggested_exit_node

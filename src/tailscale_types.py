@@ -1,7 +1,7 @@
 from typing import TypedDict, Optional, Any, NotRequired
 
 # Gemini 2.5 Pro helped generate this file based on an example `tailscale status --json` output
-# May not be perfectly accurate, but good enough for VSCode type hints
+# Not fully accurate, but good enough for VSCode type hints :pf:
 
 
 class BaseNode(TypedDict):
@@ -32,7 +32,7 @@ class BaseNode(TypedDict):
     InNetworkMap: bool
     InMagicSock: bool
     InEngine: bool
-    KeyExpiry: NotRequired[str] # This key is not present on all nodes
+    KeyExpiry: NotRequired[str]  # This key is not present on all nodes
 
 
 class SelfNode(BaseNode):
