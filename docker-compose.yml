@@ -1,42 +1,14 @@
 volumes:
   tailscale-state:
-  tailscale-socket:
 
 services:
-  tailscale:
-    image: tailscale/tailscale:latest
-    hostname: tailscale-sidecar
-    environment:
-      - TS_HOSTNAME=music-downloader
-      - TS_AUTHKEY=${TS_AUTHKEY}
-      - TS_EXTRA_ARGS=--exit-node=${TS_EXIT_NODE_ID}
-      - TS_STATE_DIR=/var/lib/tailscale
-      - TS_SOCKET=/var/run/tailscale/tailscaled.sock
-      - TS_AUTH_ONCE=false
-    volumes:
-      - tailscale-state:/var/lib/tailscale
-      - tailscale-socket:/var/run/tailscale
-    cap_add:
-      - SYS_ADMIN
-      - MKNOD
-      - DAC_READ_SEARCH
-    security_opt:
-      - apparmor:unconfined
-
   app:
     build: 
       context: .
       dockerfile: Dockerfile.app
-    depends_on:
-      - tailscale
-    network_mode: service:tailscale
     volumes:
-      - tailscale-state:/var/lib/tailscale:ro
-      - tailscale-socket:/var/run/tailscale
-    cap_add:
-      - SYS_ADMIN
-      - MKNOD
-      - DAC_READ_SEARCH
-    security_opt:
-      - apparmor:unconfined
-    entrypoint: python3 -u main.py
+      - tailscale-state:/var/lib/tailscale
+    environment:
+      - TS_NAME=music-downloader
+      - TS_AUTHKEY=${TS_AUTHKEY}
+    entrypoint: sh start.sh

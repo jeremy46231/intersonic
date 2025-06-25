@@ -1,11 +1,17 @@
 #!/bin/bash
 set -e
 
+# Install apt packages
 apt-get update
-DEBIAN_FRONTEND=noninteractive apt-get install -y curl wget tar rclone
-apt-get clean
-rm -rf /var/lib/apt/lists/*
+DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+  curl wget tar rclone ca-certificates
 
+
+# Install pip packages
+pip install --no-cache-dir requests
+
+
+# Install Tailscale
 arch=$(uname -m)
 case "$arch" in
   x86_64) arch="amd64" ;;
@@ -21,7 +27,6 @@ case "$arch" in
   *) echo "Unsupported architecture: $arch"; exit 1 ;;
 esac
 
-# Set default version to "latest"
 version="latest"
 tarball="tailscale_${version}_${arch}.tgz"
 url="https://pkgs.tailscale.com/stable/${tarball}"
@@ -34,7 +39,10 @@ tar \
   -xvf "$tarball" \
   --strip-components=1 \
   -C /usr/local/bin \
-  '*/tailscale'
-rm "$tarball"
+  '*/tailscale' '*/tailscaled'
 
-tailscale --version
+
+# Clean up
+rm "$tarball"
+apt-get clean
+rm -rf /var/lib/apt/lists/*

@@ -1,17 +1,41 @@
 import subprocess
 import asyncio
 import json
+import os
 
 from tailscale_types import TailscaleStatus
+from utils import extend_env
 
 
 async def run_tailscale(*args):
-    command = "tailscale"
     process = await asyncio.create_subprocess_exec(
-        command, *args, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        "tailscale",
+        *args,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        env=extend_env(no_proxy=True),
     )
     stdout, stderr = await process.communicate()
     return process.returncode, stdout.decode(), stderr.decode()
+
+
+async def tailscale_up(exit_node: str = None):
+    status, stdout, stderr = await run_tailscale(
+        "up",
+        "--reset",
+        "--auth-key",
+        os.environ.get("TS_AUTHKEY", ""),
+        "--hostname",
+        os.environ.get("TS_NAME", "music-downloader"),
+        *(
+            ["--exit-node", exit_node, "--exit-node-allow-lan-access"]
+            if exit_node
+            else []
+        ),
+        "--json",
+    )
+    if status != 0:
+        raise RuntimeError(f"Tailscale up command failed: {stdout}{stderr}")
 
 
 async def wait_for_tailscale():
@@ -29,7 +53,7 @@ async def wait_for_tailscale():
 async def tailscale_status():
     status, stdout, stderr = await run_tailscale("status", "--json")
     if status != 0:
-        raise RuntimeError(f"Tailscale status command failed: {stderr}")
+        raise RuntimeError(f"Tailscale status command failed: {stdout}{stderr}")
     try:
         status_data: TailscaleStatus = json.loads(stdout)
     except json.JSONDecodeError as e:
