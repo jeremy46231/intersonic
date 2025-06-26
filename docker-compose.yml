@@ -1,5 +1,6 @@
 volumes:
   tailscale-state:
+  spotipy-cache:
 
 services:
   app:
@@ -8,6 +9,7 @@ services:
       dockerfile: Dockerfile.app
     volumes:
       - tailscale-state:/var/lib/tailscale
+      - spotipy-cache:/data/spotipy-cache
       - ${MUSIC_DIR}:/music
     environment:
       - TS_NAME=music-downloader

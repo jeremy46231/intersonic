@@ -6,6 +6,7 @@ repomix-output.xml
 
 queries.sh
 archive.txt
+music/
 
 __pycache__/
 *.py[cod]

@@ -7,6 +7,7 @@ from tailscale import (
     tailscale_exit_nodes,
 )
 from utils import get_public_ipv4
+from download import temp_download
 
 
 async def main():
@@ -35,6 +36,8 @@ async def main():
     print("Tailscale is up and running with the specified exit node.")
 
     print(f"Public IPv4: {get_public_ipv4()}")
+    
+    temp_download()
 
     while True:
         await asyncio.sleep(3600)
