@@ -16,5 +16,14 @@ def extend_env(
 
 
 def get_public_ipv4():
-    print(os.environ.get("ALL_PROXY", ""))
-    return requests.get("https://api.ipify.org").text
+    """
+    Fetches the public IPv4 address using a new, isolated request session.
+    This prevents connection pooling issues when network settings (like a
+    Tailscale exit node) change during the script's lifetime.
+    """
+    # Using a new Session for each call ensures no old connections are reused.
+    with requests.Session() as session:
+        # The session will automatically detect and use the proxy environment variables.
+        response = session.get("https://api.ipify.org", timeout=60)
+        response.raise_for_status()
+        return response.text

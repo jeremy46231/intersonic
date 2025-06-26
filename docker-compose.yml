@@ -8,7 +8,12 @@ services:
       dockerfile: Dockerfile.app
     volumes:
       - tailscale-state:/var/lib/tailscale
+      - ${MUSIC_DIR}:/music
     environment:
       - TS_NAME=music-downloader
-      - TS_AUTHKEY=${TS_AUTHKEY}
+      - TS_AUTHKEY
+      - TS_EXIT_NODE
+      - SPOTIFY_CLIENT_ID
+      - SPOTIFY_CLIENT_SECRET
+      - GENIUS_ACCESS_TOKEN
     entrypoint: sh start.sh

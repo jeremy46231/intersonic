@@ -19,12 +19,11 @@ async def run_tailscale(*args):
     return process.returncode, stdout.decode(), stderr.decode()
 
 
-async def tailscale_up(exit_node: str = None):
+async def tailscale_up(*, authkey: str = None, exit_node: str = None):
     status, stdout, stderr = await run_tailscale(
         "up",
         "--reset",
-        "--auth-key",
-        os.environ.get("TS_AUTHKEY", ""),
+        *(["--auth-key", authkey] if authkey else []),
         "--hostname",
         os.environ.get("TS_NAME", "music-downloader"),
         *(
@@ -43,7 +42,6 @@ async def wait_for_tailscale():
         try:
             status, stdout, stderr = await run_tailscale("status")
             if status == 0:
-                print("Tailscale is running.")
                 return
         except Exception as e:
             print(f"Error checking Tailscale status: {e}")

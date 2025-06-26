@@ -4,7 +4,7 @@ set -e
 # Install apt packages
 apt-get update
 DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-  curl wget tar rclone ca-certificates
+  curl wget tar ca-certificates
 
 
 # Install pip packages
