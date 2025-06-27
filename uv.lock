@@ -175,12 +175,14 @@ name = "music-downloader"
 version = "0.1.0"
 source = { virtual = "." }
 dependencies = [
+    { name = "mutagen" },
     { name = "requests" },
     { name = "spotdl" },
 ]
 
 [package.metadata]
 requires-dist = [
+    { name = "mutagen", specifier = ">=1.47.0" },
     { name = "requests", specifier = ">=2.32.4" },
     { name = "spotdl", specifier = ">=4.2.11" },
 ]
