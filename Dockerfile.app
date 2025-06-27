@@ -42,7 +42,6 @@ RUN <<EOF
 EOF
 
 # Install Python dependencies
-RUN pip install --no-cache-dir requests spotdl
-
+RUN pip install --no-cache-dir requests spotdl nest-asyncio
 
 COPY src/ .
