@@ -5,7 +5,7 @@ from spotdl.types.song import Song
 from pathlib import Path
 import os
 
-from metadata import process_metadata
+from metadata.main import process_file
 
 client_id = os.environ.get("SPOTIFY_CLIENT_ID")
 client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
@@ -88,6 +88,7 @@ def temp_download():
         if not path:
             print(f"No path returned for song: {song.display_name}")
             continue
-        process_metadata(path)
+        process_file(path)
+        print(f"Processed file: {path}")
 
     return results
