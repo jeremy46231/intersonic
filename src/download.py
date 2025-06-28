@@ -60,7 +60,7 @@ def get_spotdl():
 
 def temp_download():
     spotdl = get_spotdl()
-    queries = ["https://open.spotify.com/artist/4LkmOQU5KA6vZgvJHnpQDl"]
+    queries = ["https://open.spotify.com/track/2LCGFBu1ej6zt4r1VGPjny"]
 
     print(f"Searching for {len(queries)} queries")
     songs = spotdl.search(queries)

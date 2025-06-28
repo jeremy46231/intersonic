@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
     "mutagen>=1.47.0",
+    "pillow>=11.2.1",
     "requests>=2.32.4",
     "spotdl>=4.2.11",
 ]

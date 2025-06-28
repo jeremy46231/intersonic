@@ -43,10 +43,10 @@ def serialize_to_lrc(lyrics: List[LyricLine]) -> str:
             result.append(f"{timestamp} {text}")
         else:
             result.append(text)
-    return "\n".join(result)
+    return "\n".join(result) + "\n"
 
 
-def serialize_to_id3(lyrics: List[LyricLine]) -> str:
+def serialize_to_plain(lyrics: List[LyricLine]) -> str:
     """Serialize lyrics into plain text suitable for ID3 (timestamps removed)."""
     return "\n".join(text for _, text in lyrics)
 
@@ -106,7 +106,7 @@ def embed_lyrics_to_mp3(mp3_path: Path, lyrics: List[LyricLine]):
 
     # Determine if any synced entries exist.
     has_synced = any(ts is not None for ts, _ in lyrics)
-    unsynced_text = serialize_to_id3(lyrics)
+    unsynced_text = serialize_to_plain(lyrics)
     tags.delall("USLT")
     tags.delall("SYLT")
     tags.add(USLT(encoding=Encoding.UTF8, text=unsynced_text))
@@ -114,7 +114,11 @@ def embed_lyrics_to_mp3(mp3_path: Path, lyrics: List[LyricLine]):
         # For SYLT, embed only those with a defined timestamp.
         sync_data = [(text, ts) for ts, text in lyrics if ts is not None]
         if sync_data:
-            tags.add(SYLT(encoding=Encoding.UTF8, text=sync_data, format=2, type=1))
+            tags.add(
+                SYLT(
+                    encoding=Encoding.UTF8, text=sync_data, format=2, type=1
+                )
+            )
     tags.save(mp3_path)
     print(f"Embedded lyrics into {mp3_path}")
 
@@ -151,8 +155,4 @@ def process_lyrics(mp3_path: Path):
         lrc_path.write_text(serialize_to_lrc(cleaned_lyrics), encoding="utf-8")
         embed_lyrics_to_mp3(mp3_path, cleaned_lyrics)
     else:
-        # Remove any existing embedded lyrics
-        remove_embedded_lyrics(mp3_path)
-
-        # Make sure .lrc exists but make it empty
-        lrc_path.write_text("", encoding="utf-8")
+        print(f"No lyrics found for {mp3_path.name}, skipping.")
