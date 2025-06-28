@@ -33,14 +33,8 @@ downloader_settings: DownloaderOptionalOptions = {
 if genius_token:
     downloader_settings["genius_token"] = genius_token
 
-spotdl_client: Spotdl | None = None
-
 
 def get_spotdl():
-    global spotdl_client
-    if spotdl_client is not None:
-        return spotdl_client
-
     client_id = os.environ.get("SPOTIFY_CLIENT_ID")
     if not client_id:
         raise ValueError("SPOTIFY_CLIENT_ID environment variable is not set")
@@ -55,19 +49,22 @@ def get_spotdl():
         headless=True,
         downloader_settings=downloader_settings,
     )
-    spotdl_client = spotdl
     return spotdl
 
 
-def download_missing(queries: list[str], status_callback: Optional[Callable[[str], None]] = None):
+def download_missing(
+    queries: list[str], status_callback: Optional[Callable[[str], None]] = None
+):
     spotdl = get_spotdl()
 
     print(f"Searching for {len(queries)} queries")
     if status_callback:
-        status_callback(f"Searching for {len(queries)} queries...")
+        status_callback(
+            f"Searching for {len(queries)} {"query" if len(queries) == 1 else "queries"}..."
+        )
     songs = spotdl.search(queries)
     print(f"Found {len(songs)} songs")
-    
+
     to_download: list[Song] = []
     for song in songs:
         path = create_file_name(
@@ -80,20 +77,24 @@ def download_missing(queries: list[str], status_callback: Optional[Callable[[str
         file_exists = os.path.exists(path)
         if not file_exists:
             to_download.append(song)
-    
+
     if not to_download:
         print("All songs already downloaded.")
         return []
 
     print(f"Downloading {len(to_download)} songs")
     if status_callback:
-        status_callback(f"Downloading {len(to_download)} songs...")
+        status_callback(
+            f"Downloading {len(to_download)} {"song" if len(to_download) == 1 else "songs"}..."
+        )
 
     results = spotdl.download_songs(to_download)
 
     for i, (song, path) in enumerate(results):
         if status_callback:
-            status_callback(f"Processing metadata for '{song.display_name}' ({i + 1}/{len(results)})...")
+            status_callback(
+                f"Processing metadata for '{song.display_name}' ({i + 1}/{len(results)})..."
+            )
         if not path:
             print(f"Warning: No path returned for song: {song.display_name}")
             continue

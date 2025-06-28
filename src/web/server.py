@@ -102,7 +102,9 @@ def start_task():
 
             print(f"Received {len(queries)} queries for download.")
 
-            TASK_STATE["message"] = f"Starting download for {len(queries)} queries..."
+            TASK_STATE["message"] = (
+                f"Starting download for {len(queries)} {"query" if len(queries) == 1 else "queries"}..."
+            )
             thread = Thread(target=run_download_task, args=(queries,))
             thread.start()
 
