@@ -42,10 +42,10 @@ def get_spotdl():
 
     client_id = os.environ.get("SPOTIFY_CLIENT_ID")
     if not client_id:
-        raise ValueError("SPOTIFY_CLIENT_ID environment variable is not set.")
+        raise ValueError("SPOTIFY_CLIENT_ID environment variable is not set")
     client_secret = os.environ.get("SPOTIFY_CLIENT_SECRET")
     if not client_secret:
-        raise ValueError("SPOTIFY_CLIENT_SECRET environment variable is not set.")
+        raise ValueError("SPOTIFY_CLIENT_SECRET environment variable is not set")
 
     spotdl = Spotdl(
         client_id=client_id,
@@ -64,7 +64,7 @@ def temp_download():
 
     print(f"Searching for {len(queries)} queries")
     songs = spotdl.search(queries)
-    print(f"Found {len(songs)} songs to download.")
+    print(f"Found {len(songs)} songs to download")
 
     to_download: list[Song] = []
     for song in songs:

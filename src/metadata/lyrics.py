@@ -119,8 +119,11 @@ def embed_lyrics_to_mp3(mp3_path: Path, lyrics: List[LyricLine]):
                     encoding=Encoding.UTF8, text=sync_data, format=2, type=1
                 )
             )
-    tags.save(mp3_path)
-    print(f"Embedded lyrics into {mp3_path}")
+    try:
+        tags.save(mp3_path)
+        print(f"Embedded lyrics into {mp3_path}")
+    except Exception as e:
+        raise RuntimeError(f"Failed to save lyrics to {mp3_path}: {e}") from e
 
 
 def remove_embedded_lyrics(mp3_path: Path):
@@ -141,8 +144,11 @@ def process_lyrics(mp3_path: Path):
 
     if lrc_path.exists():
         # Priority: .lrc file if it exists
-        raw_text = lrc_path.read_text(encoding="utf-8")
-        raw_lyrics = parse_lyrics(raw_text)
+        try:
+            raw_text = lrc_path.read_text(encoding="utf-8")
+            raw_lyrics = parse_lyrics(raw_text)
+        except Exception as e:
+            print(f"Failed to read lyrics from {lrc_path}: {e}")
     else:
         # Fallback: parse lyrics from ID3
         raw_lyrics = parse_id3_lyrics(mp3_path)
@@ -152,7 +158,10 @@ def process_lyrics(mp3_path: Path):
         cleaned_lyrics = clean_lyrics(raw_lyrics)
 
         # Write to .lrc file and embed in MP3
-        lrc_path.write_text(serialize_to_lrc(cleaned_lyrics), encoding="utf-8")
-        embed_lyrics_to_mp3(mp3_path, cleaned_lyrics)
+        try:
+            lrc_path.write_text(serialize_to_lrc(cleaned_lyrics), encoding="utf-8")
+            embed_lyrics_to_mp3(mp3_path, cleaned_lyrics)
+        except Exception as e:
+            print(f"Failed to process lyrics for {mp3_path}: {e}")
     else:
-        print(f"No lyrics found for {mp3_path.name}, skipping.")
+        print(f"No lyrics found for {mp3_path.name}, skipping")

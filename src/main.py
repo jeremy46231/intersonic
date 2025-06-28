@@ -7,7 +7,7 @@ from download import temp_download
 from metadata.main import process_file, process_directory
 
 def main():
-    print("Hello from main.py!")
+    print("Hello from main.py")
 
     tailscale_setup()
 

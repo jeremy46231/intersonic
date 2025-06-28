@@ -23,7 +23,6 @@ def extract_embedded_art(mp3_path: Path) -> Optional[bytes]:
             return apic_frames[0].data
     except Exception as e:
         print(f"Warning: Could not extract embedded art from {mp3_path}: {e}")
-        pass
     return None
 
 
@@ -70,8 +69,11 @@ def embed_art_to_mp3(mp3_path: Path, image_data: bytes):
             data=image_data,
         )
     )
-    tags.save(mp3_path)
-    print(f"Embedded album art into {mp3_path}")
+    try:
+        tags.save(mp3_path)
+        print(f"Embedded album art into {mp3_path}")
+    except Exception as e:
+        raise RuntimeError(f"Failed to save album art to {mp3_path}: {e}") from e
 
 
 def process_album_art(mp3_path: Path):
@@ -87,7 +89,10 @@ def process_album_art(mp3_path: Path):
 
     if jpg_path.exists():
         # Priority 1: .jpg file if it exists
-        raw_image_data = jpg_path.read_bytes()
+        try:
+            raw_image_data = jpg_path.read_bytes()
+        except Exception as e:
+            print(f"Failed to read image from {jpg_path}: {e}")
     else:
         # Priority 2: Fallback to embedded art
         raw_image_data = extract_embedded_art(mp3_path)
@@ -98,8 +103,11 @@ def process_album_art(mp3_path: Path):
 
         if final_jpg_data:
             # Write to .jpg file and embed in MP3
-            jpg_path.write_bytes(final_jpg_data)
-            embed_art_to_mp3(mp3_path, final_jpg_data)
+            try:
+                jpg_path.write_bytes(final_jpg_data)
+                embed_art_to_mp3(mp3_path, final_jpg_data)
+            except Exception as e:
+                print(f"Failed to process album art for {mp3_path}: {e}")
         else:
             print(f"Could not get image data for {mp3_path.name}, skipping")
     else:

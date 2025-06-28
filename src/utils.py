@@ -31,6 +31,9 @@ def get_public_ipv4():
     # Using a new Session for each call ensures no old connections are reused.
     with requests.Session() as session:
         # The session will automatically detect and use the proxy environment variables.
-        response = session.get("https://api.ipify.org", timeout=60)
-        response.raise_for_status()
-        return response.text
+        try:
+            response = session.get("https://api.ipify.org", timeout=60)
+            response.raise_for_status()
+            return response.text
+        except Exception as e:
+            raise RuntimeError(f"Failed to get public IPv4 address: {e}") from e

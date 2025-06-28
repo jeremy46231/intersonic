@@ -54,7 +54,7 @@ def tailscale_status():
     try:
         status_data: TailscaleStatus = json.loads(stdout)
     except json.JSONDecodeError as e:
-        raise RuntimeError(f"Failed to parse Tailscale status JSON: {e}")
+        raise RuntimeError(f"Failed to parse Tailscale status JSON: {e}") from e
     return status_data
 
 
@@ -72,10 +72,10 @@ def tailscale_exit_nodes():
 def tailscale_setup():
     authkey = os.environ.get("TS_AUTHKEY")
     if not authkey:
-        raise ValueError("TS_AUTHKEY environment variable is not set.")
+        raise ValueError("TS_AUTHKEY environment variable is not set")
     exit_node_name = os.environ.get("TS_EXIT_NODE")
     if not exit_node_name:
-        raise ValueError("TS_EXIT_NODE environment variable is not set.")
+        raise ValueError("TS_EXIT_NODE environment variable is not set")
 
     tailscale_up(authkey=authkey)
     print(f"Public IPv4: {get_public_ipv4()}")
@@ -96,6 +96,6 @@ def tailscale_setup():
     print(f"Setting exit node to: {exit_node['DNSName'][:-1]} ({exit_node['Relay']})")
     tailscale_up(exit_node=exit_node["DNSName"])
     time.sleep(1)
-    print("Tailscale is up and running with the specified exit node.")
+    print("Tailscale is up and running with the specified exit node")
 
     print(f"Public IPv4: {get_public_ipv4()}")

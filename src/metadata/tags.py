@@ -92,7 +92,7 @@ def json_to_tags(data: str) -> Tags:
     try:
         dict = json.loads(data)
     except json.JSONDecodeError as e:
-        raise ValueError(f"Invalid JSON data: {e}")
+        raise ValueError(f"Invalid JSON data: {e}") from e
     return Tags(**dict)
 
 
@@ -106,7 +106,8 @@ def parse_id3_tags(mp3_path: Path) -> Optional[Tags]:
     """Parses ID3 tags from an MP3 into a structured Tags object."""
     try:
         id3 = ID3(mp3_path)
-    except Exception:
+    except Exception as e:
+        print(f"Failed to read ID3 tags from {mp3_path}: {e}")
         return None
 
     spotify_url, youtube_url = None, None
@@ -231,7 +232,10 @@ def embed_tags(mp3_path: Path, tags_data: Tags):
         id3.add(frame)
         print(f"Preserved tag: {frame}")
 
-    id3.save(mp3_path)
+    try:
+        id3.save(mp3_path)
+    except Exception as e:
+        raise RuntimeError(f"Failed to save ID3 tags to {mp3_path}: {e}") from e
 
 
 def process_tags(mp3_path: Path):
@@ -265,11 +269,14 @@ def process_tags(mp3_path: Path):
         embed_tags(mp3_path, tags_data)
 
         # Write to .json file
-        with open(json_path, "w", encoding="utf-8") as f:
-            f.write(tags_to_json(tags_data))
-            print(f"Updated tags in {json_path}")
-            print(f"Tags: {tags_to_json(tags_data)}")
+        try:
+            with open(json_path, "w", encoding="utf-8") as f:
+                f.write(tags_to_json(tags_data))
+                print(f"Updated tags in {json_path}")
+                print(f"Tags: {tags_to_json(tags_data)}")
+        except Exception as e:
+            raise RuntimeError(f"Failed to write tags to {json_path}: {e}") from e
 
         print(f"Processed and synced tags for {mp3_path.name}")
     else:
-        print(f"Could not parse any tags for {mp3_path.name}, skipping.")
+        print(f"Could not parse any tags for {mp3_path.name}, skipping")
