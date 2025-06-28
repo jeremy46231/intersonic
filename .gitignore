@@ -11,5 +11,4 @@ music/
 __pycache__/
 *.py[cod]
 *.pyo
-docker-compose.override.yml
 *.log

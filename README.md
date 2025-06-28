@@ -73,3 +73,11 @@ To process your existing library:
 - Click **"Run Metadata Processing"**. This will scan every MP3 in your `MUSIC_DIR` and apply the cleaning and sidecar-file logic.
 
 The status box at the top will show you what the application is doing in real time.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+## Contributing
+
+I will happily accept pull requests for fixes, improvements, or features. Keep in mind that this is a personal project that I primarily use for myself, so you might be better off forking and maintaining your own version if you have different needs.

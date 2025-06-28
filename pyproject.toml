@@ -1,6 +1,9 @@
+# This file isn't actually used by the docker container, but it is useful
+# if you want to install the dependencies locally for types and linting.
+
 [project]
 name = "intersonic"
-version = "0.1.0"
+version = "1.0.0"
 requires-python = ">=3.13"
 dependencies = [
     "flask>=3.1.1",

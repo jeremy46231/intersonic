@@ -11,8 +11,6 @@ export HTTP_PROXY=http://localhost:1055/
 export HTTPS_PROXY=http://localhost:1055/
 export NO_PROXY=localhost,127.0.0.1,::1,.local,.test,.example,.invalid
 
-echo "Starting Gunicorn web server..."
-
 export PYTHONUNBUFFERED=1
 # Use Gunicorn to run the Flask app from the 'web.server' module.
 # --workers 1: Important for threading.Lock to work
