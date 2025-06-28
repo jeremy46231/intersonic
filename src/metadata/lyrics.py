@@ -114,11 +114,7 @@ def embed_lyrics_to_mp3(mp3_path: Path, lyrics: List[LyricLine]):
         # For SYLT, embed only those with a defined timestamp.
         sync_data = [(text, ts) for ts, text in lyrics if ts is not None]
         if sync_data:
-            tags.add(
-                SYLT(
-                    encoding=Encoding.UTF8, text=sync_data, format=2, type=1
-                )
-            )
+            tags.add(SYLT(encoding=Encoding.UTF8, text=sync_data, format=2, type=1))
     try:
         tags.save(mp3_path)
     except Exception as e:

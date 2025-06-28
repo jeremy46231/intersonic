@@ -2,7 +2,6 @@ from spotdl import Spotdl
 from spotdl.utils.formatter import create_file_name
 from spotdl.types.options import DownloaderOptionalOptions
 from spotdl.types.song import Song
-from pathlib import Path
 import os
 
 from metadata.main import process_file
@@ -77,7 +76,7 @@ def download_missing(queries: list[str]):
         file_exists = os.path.exists(path)
         if not file_exists:
             to_download.append(song)
-    
+
     print(f"Downloading {len(to_download)} songs")
 
     results = spotdl.download_songs(to_download)

@@ -93,7 +93,7 @@ def tailscale_setup():
             f"Expected exactly one exit node matching '{exit_node_name}', found {len(matching_nodes)}"
         )
     exit_node = matching_nodes[0]
-    
+
     print(f"Setting exit node to: {exit_node['DNSName'][:-1]} ({exit_node['Relay']})")
     tailscale_up(exit_node=exit_node["DNSName"])
     time.sleep(1)
