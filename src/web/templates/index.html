@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Music Downloader</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 0 20px;
+      }
+      textarea {
+        width: 100%;
+        box-sizing: border-box;
+      }
+      button {
+        padding: 10px 15px;
+        font-size: 1em;
+        cursor: pointer;
+      }
+      #status-display {
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 5px;
+        margin-bottom: 20px;
+      }
+    </style>
+    <!-- Load the htmx library -->
+    <script src="/static/htmx.min.js" defer></script>
+  </head>
+  <body>
+    <h1>Music Downloader Control Panel</h1>
+
+    <div
+      id="status-display"
+      hx-get="/status"
+      hx-trigger="load, every 2s"
+      hx-swap="innerHTML"
+    >
+      {% include '_status.html' %}
+    </div>
+
+    <hr />
+
+    <h3>Download new songs</h3>
+    <p>Enter one query per line.</p>
+    <form hx-post="/start_task" hx-target="#status-display">
+      <input type="hidden" name="task_type" value="download" />
+      <textarea
+        name="queries"
+        rows="10"
+        placeholder="https://open.spotify.com/track/..."
+      ></textarea>
+      <br /><br />
+      <button type="submit">Download Missing Songs</button>
+    </form>
+
+    <hr />
+
+    <h3>Process all metadata</h3>
+    <form hx-post="/start_task" hx-target="#status-display">
+      <input type="hidden" name="task_type" value="process" />
+      <button type="submit">Run Metadata Processing</button>
+    </form>
+  </body>
+</html>

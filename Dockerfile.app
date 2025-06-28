@@ -42,6 +42,6 @@ RUN <<EOF
 EOF
 
 # Install Python dependencies
-RUN pip install --no-cache-dir requests spotdl mutagen pillow
+RUN pip install --no-cache-dir requests spotdl mutagen pillow flask gunicorn
 
 COPY src/ .

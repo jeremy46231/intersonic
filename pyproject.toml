@@ -3,6 +3,8 @@ name = "music-downloader"
 version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
+    "flask>=3.1.1",
+    "gunicorn>=23.0.0",
     "mutagen>=1.47.0",
     "pillow>=11.2.1",
     "requests>=2.32.4",

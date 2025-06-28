@@ -1,6 +1,6 @@
 log/
 *.env
-temp*
+tmp*
 repomix-output.xml
 .DS_Store
 

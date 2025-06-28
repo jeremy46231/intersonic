@@ -4,9 +4,11 @@ volumes:
 
 services:
   app:
-    build: 
+    build:
       context: .
       dockerfile: Dockerfile.app
+    ports:
+      - '3000:3000'
     volumes:
       - tailscale-state:/var/lib/tailscale
       - spotipy-cache:/data/spotipy-cache

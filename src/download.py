@@ -1,3 +1,5 @@
+from typing import Optional
+from collections.abc import Callable
 from spotdl import Spotdl
 from spotdl.utils.formatter import create_file_name
 from spotdl.types.options import DownloaderOptionalOptions
@@ -57,13 +59,15 @@ def get_spotdl():
     return spotdl
 
 
-def download_missing(queries: list[str]):
+def download_missing(queries: list[str], status_callback: Optional[Callable[[str], None]] = None):
     spotdl = get_spotdl()
 
     print(f"Searching for {len(queries)} queries")
+    if status_callback:
+        status_callback(f"Searching for {len(queries)} queries...")
     songs = spotdl.search(queries)
     print(f"Found {len(songs)} songs")
-
+    
     to_download: list[Song] = []
     for song in songs:
         path = create_file_name(
@@ -76,12 +80,20 @@ def download_missing(queries: list[str]):
         file_exists = os.path.exists(path)
         if not file_exists:
             to_download.append(song)
+    
+    if not to_download:
+        print("All songs already downloaded.")
+        return []
 
     print(f"Downloading {len(to_download)} songs")
+    if status_callback:
+        status_callback(f"Downloading {len(to_download)} songs...")
 
     results = spotdl.download_songs(to_download)
 
-    for song, path in results:
+    for i, (song, path) in enumerate(results):
+        if status_callback:
+            status_callback(f"Processing metadata for '{song.display_name}' ({i + 1}/{len(results)})...")
         if not path:
             print(f"Warning: No path returned for song: {song.display_name}")
             continue
