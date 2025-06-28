@@ -1,3 +1,3 @@
-# Music downloading thing
+# Intersonic
 
 For Navidrome, using spotdl

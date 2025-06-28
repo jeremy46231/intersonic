@@ -6,7 +6,7 @@ from metadata.main import process_directory
 
 
 def main():
-    print("Hello from main.py")
+    print("Hello from Intersonic")
 
     tailscale_setup()
 

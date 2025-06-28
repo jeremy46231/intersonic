@@ -14,7 +14,7 @@ services:
       - spotipy-cache:/data/spotipy-cache
       - ${MUSIC_DIR}:/music
     environment:
-      - TS_NAME=music-downloader
+      - TS_NAME=intersonic
       - TS_AUTHKEY
       - TS_EXIT_NODE
       - SPOTIFY_CLIENT_ID
