@@ -16,7 +16,7 @@ if not client_id or not client_secret:
         "SPOTIFY_CLIENT_ID and SPOTIFY_CLIENT_SECRET must be set as environment variables"
     )
 if not genius_token:
-    print("GENIUS_ACCESS_TOKEN is not set")
+    print("Warning: GENIUS_ACCESS_TOKEN is not set")
 
 downloader_settings: DownloaderOptionalOptions = {
     "audio_providers": ["youtube-music"],
@@ -58,13 +58,12 @@ def get_spotdl():
     return spotdl
 
 
-def temp_download():
+def download_missing(queries: list[str]):
     spotdl = get_spotdl()
-    queries = ["https://open.spotify.com/track/2LCGFBu1ej6zt4r1VGPjny"]
 
     print(f"Searching for {len(queries)} queries")
     songs = spotdl.search(queries)
-    print(f"Found {len(songs)} songs to download")
+    print(f"Found {len(songs)} songs")
 
     to_download: list[Song] = []
     for song in songs:
@@ -76,19 +75,17 @@ def temp_download():
             file_name_length=spotdl.downloader.settings["max_filename_length"],
         )
         file_exists = os.path.exists(path)
-        if file_exists:
-            print(f"File already exists: {path}")
-        else:
-            print(f"Downloading song: {song.display_name} to {path}")
+        if not file_exists:
             to_download.append(song)
+    
+    print(f"Downloading {len(to_download)} songs")
 
     results = spotdl.download_songs(to_download)
 
     for song, path in results:
         if not path:
-            print(f"No path returned for song: {song.display_name}")
+            print(f"Warning: No path returned for song: {song.display_name}")
             continue
         process_file(path)
-        print(f"Processed file: {path}")
 
     return results

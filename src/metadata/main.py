@@ -17,4 +17,3 @@ def process_directory(directory: Path):
     """
     for mp3_file in directory.rglob("*.mp3"):
         process_file(mp3_file)
-        print(f"Processed {mp3_file}")

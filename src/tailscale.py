@@ -81,9 +81,9 @@ def tailscale_setup():
     print(f"Public IPv4: {get_public_ipv4()}")
 
     exit_nodes = tailscale_exit_nodes()
-    print("Exit Nodes:")
-    for node in exit_nodes:
-        print(f"- {node['DNSName'][:-1]} ({node['Relay']})")
+    # print("Exit Nodes:")
+    # for node in exit_nodes:
+    #     print(f"- {node['DNSName'][:-1]} ({node['Relay']})")
 
     matching_nodes = [
         node for node in exit_nodes if node["DNSName"].startswith(exit_node_name)
@@ -93,9 +93,10 @@ def tailscale_setup():
             f"Expected exactly one exit node matching '{exit_node_name}', found {len(matching_nodes)}"
         )
     exit_node = matching_nodes[0]
+    
     print(f"Setting exit node to: {exit_node['DNSName'][:-1]} ({exit_node['Relay']})")
     tailscale_up(exit_node=exit_node["DNSName"])
     time.sleep(1)
-    print("Tailscale is up and running with the specified exit node")
+    print(f"Tailscale is running with exit node: {exit_node['DNSName'][:-1]}")
 
-    print(f"Public IPv4: {get_public_ipv4()}")
+    print(f"Public IPv4 (exit node enabled): {get_public_ipv4()}")

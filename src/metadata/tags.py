@@ -107,7 +107,7 @@ def parse_id3_tags(mp3_path: Path) -> Optional[Tags]:
     try:
         id3 = ID3(mp3_path)
     except Exception as e:
-        print(f"Failed to read ID3 tags from {mp3_path}: {e}")
+        print(f"Error: Failed to read ID3 tags from {mp3_path}: {e}")
         return None
 
     spotify_url, youtube_url = None, None
@@ -179,10 +179,8 @@ def embed_tags(mp3_path: Path, tags_data: Tags):
 
     # Clear all existing tags managed by this module
     keys_to_delete = [k for k in id3.keys() if k[:4] in MANAGED_INTERNALLY]
-    print(f"Clearing existing tags: {keys_to_delete}")
     for key in keys_to_delete:
         id3.delall(key)
-    print(f"Remaining tags after clearing: {id3.keys()}")
 
     # Add tags from our structured data
     if tags_data.title:
@@ -230,7 +228,6 @@ def embed_tags(mp3_path: Path, tags_data: Tags):
     # Add back all other preserved tags
     for frame in tags_data.other_tags.values():
         id3.add(frame)
-        print(f"Preserved tag: {frame}")
 
     try:
         id3.save(mp3_path)
@@ -272,11 +269,7 @@ def process_tags(mp3_path: Path):
         try:
             with open(json_path, "w", encoding="utf-8") as f:
                 f.write(tags_to_json(tags_data))
-                print(f"Updated tags in {json_path}")
-                print(f"Tags: {tags_to_json(tags_data)}")
         except Exception as e:
             raise RuntimeError(f"Failed to write tags to {json_path}: {e}") from e
-
-        print(f"Processed and synced tags for {mp3_path.name}")
     else:
         print(f"Could not parse any tags for {mp3_path.name}, skipping")

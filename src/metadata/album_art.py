@@ -16,8 +16,6 @@ def extract_embedded_art(mp3_path: Path) -> Optional[bytes]:
         tags = ID3(mp3_path)
         # 'APIC:' is the key for Attached Picture frames
         apic_frames = tags.getall("APIC")
-        print(f"Found {len(apic_frames)} embedded art frames in {mp3_path}")
-        print(f"APIC frames: {apic_frames}")
         if apic_frames:
             # Just return the data of the first picture found
             return apic_frames[0].data
@@ -71,7 +69,6 @@ def embed_art_to_mp3(mp3_path: Path, image_data: bytes):
     )
     try:
         tags.save(mp3_path)
-        print(f"Embedded album art into {mp3_path}")
     except Exception as e:
         raise RuntimeError(f"Failed to save album art to {mp3_path}: {e}") from e
 
@@ -92,7 +89,7 @@ def process_album_art(mp3_path: Path):
         try:
             raw_image_data = jpg_path.read_bytes()
         except Exception as e:
-            print(f"Failed to read image from {jpg_path}: {e}")
+            print(f"Error: Failed to read image from {jpg_path}: {e}")
     else:
         # Priority 2: Fallback to embedded art
         raw_image_data = extract_embedded_art(mp3_path)
@@ -107,7 +104,7 @@ def process_album_art(mp3_path: Path):
                 jpg_path.write_bytes(final_jpg_data)
                 embed_art_to_mp3(mp3_path, final_jpg_data)
             except Exception as e:
-                print(f"Failed to process album art for {mp3_path}: {e}")
+                print(f"Error: Failed to process album art for {mp3_path}: {e}")
         else:
             print(f"Could not get image data for {mp3_path.name}, skipping")
     else:

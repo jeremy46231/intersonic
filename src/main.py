@@ -3,28 +3,20 @@ import time
 import pathlib
 
 from tailscale import tailscale_setup
-from download import temp_download
-from metadata.main import process_file, process_directory
+from download import download_missing
+from metadata.main import process_directory
 
 def main():
     print("Hello from main.py")
 
     tailscale_setup()
 
-    # print("Starting download...")
-    # temp_download()
+    print("Starting download...")
+    queries = ["https://open.spotify.com/track/2LCGFBu1ej6zt4r1VGPjny"]
+    download_missing(queries)
     
-    # Process every MP3 file in the /music directory
     process_directory(pathlib.Path("/music"))
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print("An error occurred:")
-        print(e)
-    finally:
-        print("Done. Sleeping...")
-        while True:
-            time.sleep(3600)
+    main()

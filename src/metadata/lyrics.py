@@ -121,7 +121,6 @@ def embed_lyrics_to_mp3(mp3_path: Path, lyrics: List[LyricLine]):
             )
     try:
         tags.save(mp3_path)
-        print(f"Embedded lyrics into {mp3_path}")
     except Exception as e:
         raise RuntimeError(f"Failed to save lyrics to {mp3_path}: {e}") from e
 
@@ -132,9 +131,8 @@ def remove_embedded_lyrics(mp3_path: Path):
         tags.delall("USLT")
         tags.delall("SYLT")
         tags.save(mp3_path)
-        print(f"Removed embedded lyrics from {mp3_path}")
     except Exception as e:
-        print(f"Error removing lyrics from {mp3_path}: {e}")
+        print(f"Error: Failed to remove lyrics from {mp3_path}: {e}")
 
 
 def process_lyrics(mp3_path: Path):
@@ -148,7 +146,7 @@ def process_lyrics(mp3_path: Path):
             raw_text = lrc_path.read_text(encoding="utf-8")
             raw_lyrics = parse_lyrics(raw_text)
         except Exception as e:
-            print(f"Failed to read lyrics from {lrc_path}: {e}")
+            print(f"Error: Failed to read lyrics from {lrc_path}: {e}")
     else:
         # Fallback: parse lyrics from ID3
         raw_lyrics = parse_id3_lyrics(mp3_path)
@@ -162,6 +160,6 @@ def process_lyrics(mp3_path: Path):
             lrc_path.write_text(serialize_to_lrc(cleaned_lyrics), encoding="utf-8")
             embed_lyrics_to_mp3(mp3_path, cleaned_lyrics)
         except Exception as e:
-            print(f"Failed to process lyrics for {mp3_path}: {e}")
+            print(f"Error: Failed to process lyrics for {mp3_path}: {e}")
     else:
         print(f"No lyrics found for {mp3_path.name}, skipping")
