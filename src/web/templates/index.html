@@ -4,8 +4,36 @@
     <meta charset="UTF-8" />
     <title>Intersonic</title>
     <style>
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+      * {
+        margin: 0;
+      }
+      img,
+      picture,
+      video,
+      canvas,
+      svg {
+        display: block;
+        max-width: 100%;
+      }
+
+      input,
+      button,
+      textarea,
+      select {
+        font: inherit;
+      }
+
       body {
-        font-family: sans-serif;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+        font-family: -apple-system, BlinkMacSystemFont, Avenir Next, Avenir,
+          Segoe UI, Helvetica Neue, Cantarell, Ubuntu, Roboto, Noto, Helvetica,
+          Arial, sans-serif;
         max-width: 800px;
         margin: 40px auto;
         padding: 0 20px;
@@ -15,15 +43,18 @@
         box-sizing: border-box;
       }
       button {
-        padding: 10px 15px;
+        line-height: 1;
+        padding: 5px 10px;
         font-size: 1em;
         cursor: pointer;
+      }
+      hr {
+        margin: 20px 0;
       }
       #status-display {
         padding: 10px;
         background-color: #f0f0f0;
         border-radius: 5px;
-        margin-bottom: 20px;
       }
     </style>
     <!-- Load the htmx library -->
@@ -52,8 +83,7 @@
         rows="10"
         placeholder="https://open.spotify.com/track/..."
       ></textarea>
-      <br /><br />
-      <button type="submit">Download Missing Songs</button>
+      <button type="submit">Download Songs</button>
     </form>
 
     <hr />
