@@ -52,7 +52,10 @@ def get_spotdl():
         downloader_settings=downloader_settings,
     )
     return spotdl
+
+
 spotdl = get_spotdl()
+
 
 def download_missing(
     queries: list[str], status_callback: Optional[Callable[[str], None]] = None
@@ -89,10 +92,10 @@ def download_missing(
         status_callback(
             f"Downloading {len(to_download)} {'song' if len(to_download) == 1 else 'songs'}..."
         )
-        
+
     total_songs = len(to_download)
     downloaded_songs = 0
-    
+
     loop = asyncio.get_event_loop()
     semaphore = asyncio.Semaphore(spotdl.downloader.settings["threads"])
 
@@ -105,22 +108,27 @@ def download_missing(
                 )
             if path:
                 process_file(path)
-            
+
             downloaded_songs += 1
             percentage_str = f"{(downloaded_songs / total_songs) * 100:.2f}%"
-            log_str = f"Downloaded {percentage_str} ({downloaded_songs}/{total_songs}) - '{song.display_name}'"
-            print(log_str)
+            song_log_str = f"Downloaded {percentage_str} ({downloaded_songs}/{total_songs}) - '{song.display_name}'"
+            print(song_log_str)
             if status_callback:
-                status_callback(log_str)
-            
+                status_callback(song_log_str)
+
             return song, path
         except Exception as e:
             print(f"Error downloading {song.display_name}: {e}")
             return song, None
 
-    tasks = [
-        download_song(song) for song in to_download
-    ]
+    tasks = [download_song(song) for song in to_download]
     results = loop.run_until_complete(asyncio.gather(*tasks))
+
+    successful_downloads = len([song for song, path in results if path is not None])
+    failed_downloads = len([song for song, path in results if path is None])
+    done_log_str = f"Successfully downloaded {successful_downloads} out of {total_songs} songs. Failed to download {failed_downloads} songs."
+    print(done_log_str)
+    if status_callback:
+        status_callback(done_log_str)
 
     return results

@@ -34,7 +34,6 @@ def run_download_task(queries: list[str]):
     try:
         # Pass our status_callback to the core download function
         download_missing(queries, status_callback=update_status)
-        update_status("Idle. Download complete.")
     except Exception as e:
         print(f"An error occurred in download thread: {e}")
         update_status(f"Error during download: {e}")
@@ -54,7 +53,7 @@ def run_process_task():
     try:
         update_status("Processing metadata for all files...")
         process_directory(pathlib.Path("/music"))
-        update_status("Idle. Metadata processing complete.")
+        update_status("Metadata processing complete.")
     except Exception as e:
         print(f"An error occurred in process thread: {e}")
         update_status(f"Error during processing: {e}")
