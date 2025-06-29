@@ -1,3 +1,4 @@
+from pathlib import Path
 from typing import Optional
 from collections.abc import Callable
 from spotdl import Spotdl
@@ -5,6 +6,7 @@ from spotdl.utils.formatter import create_file_name
 from spotdl.types.options import DownloaderOptionalOptions
 from spotdl.types.song import Song
 import os
+import asyncio
 
 from metadata.main import process_file
 
@@ -50,17 +52,17 @@ def get_spotdl():
         downloader_settings=downloader_settings,
     )
     return spotdl
-
+spotdl = get_spotdl()
 
 def download_missing(
     queries: list[str], status_callback: Optional[Callable[[str], None]] = None
 ):
-    spotdl = get_spotdl()
+    # spotdl = get_spotdl()
 
     print(f"Searching for {len(queries)} queries")
     if status_callback:
         status_callback(
-            f"Searching for {len(queries)} {"query" if len(queries) == 1 else "queries"}..."
+            f"Searching for {len(queries)} {'query' if len(queries) == 1 else 'queries'}..."
         )
     songs = spotdl.search(queries)
     print(f"Found {len(songs)} songs")
@@ -85,19 +87,40 @@ def download_missing(
     print(f"Downloading {len(to_download)} songs")
     if status_callback:
         status_callback(
-            f"Downloading {len(to_download)} {"song" if len(to_download) == 1 else "songs"}..."
+            f"Downloading {len(to_download)} {'song' if len(to_download) == 1 else 'songs'}..."
         )
+        
+    total_songs = len(to_download)
+    downloaded_songs = 0
+    
+    loop = asyncio.get_event_loop()
+    semaphore = asyncio.Semaphore(spotdl.downloader.settings["threads"])
 
-    results = spotdl.download_songs(to_download)
+    async def download_song(song: Song) -> tuple[Song, Optional[Path]]:
+        nonlocal downloaded_songs
+        try:
+            async with semaphore:
+                song, path = await loop.run_in_executor(
+                    None, spotdl.downloader.search_and_download, song
+                )
+            if path:
+                process_file(path)
+            
+            downloaded_songs += 1
+            percentage_str = f"{(downloaded_songs / total_songs) * 100:.2f}%"
+            log_str = f"Downloaded {percentage_str} ({downloaded_songs}/{total_songs}) - '{song.display_name}'"
+            print(log_str)
+            if status_callback:
+                status_callback(log_str)
+            
+            return song, path
+        except Exception as e:
+            print(f"Error downloading {song.display_name}: {e}")
+            return song, None
 
-    for i, (song, path) in enumerate(results):
-        if status_callback:
-            status_callback(
-                f"Processing metadata for '{song.display_name}' ({i + 1}/{len(results)})..."
-            )
-        if not path:
-            print(f"Warning: No path returned for song: {song.display_name}")
-            continue
-        process_file(path)
+    tasks = [
+        download_song(song) for song in to_download
+    ]
+    results = loop.run_until_complete(asyncio.gather(*tasks))
 
     return results
